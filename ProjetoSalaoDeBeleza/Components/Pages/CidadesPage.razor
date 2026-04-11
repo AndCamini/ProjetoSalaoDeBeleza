@@ -1,0 +1,122 @@
+﻿@page "/cidades"
+@rendermode InteractiveServer
+@using ProjetoSalaoDeBeleza.Models
+@using ProjetoSalaoDeBeleza.Services
+@inject EstadosService estadosService
+@inject CidadesService cidadesService
+@inject NavigationManager Navigation
+
+<h3>Cadastro de Cidades</h3>
+
+<EditForm Model="@cidadeAtual" OnValidSubmit="Salvar" FormName="formCidades">
+    <DataAnnotationsValidator />
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Nome da Cidade</label>
+            <InputText @bind-Value="cidadeAtual.Cidade" class="form-control" />
+        </div>
+
+        <div class="col-md-6 mb-3 d-flex align-items-end">
+            <div class="flex-grow-1 me-2">
+                <label class="form-label">Estado</label>
+                <InputSelect @bind-Value="cidadeAtual.CodEstado" class="form-select">
+                    <option value="0">Selecione um estado...</option>
+                    @foreach (var estado in listaEstados)
+                    {
+                        <option value="@estado.CodEstado">@estado.Estado - @estado.UF</option>
+                    }
+                </InputSelect>
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline-secondary" @onclick='() => Navigation.NavigateTo("/estados")' title="Cadastrar Novo Estado">
+                    + Novo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cidade</th>
+            <th>Cód. Estado</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cidade in listaCidades)
+        {
+            <tr>
+                <td>@cidade.CodCidade</td>
+                <td>@cidade.Cidade</td>
+                <td>@cidade.CodEstado</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" @onclick="() => Editar(cidade)">Editar</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => Excluir(cidade.CodCidade)">Excluir</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Cidades> listaCidades = new();
+    private List<Estados> listaEstados = new();
+
+    [SupplyParameterFromForm]
+    private Cidades cidadeAtual { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDados();
+    }
+
+    private async Task CarregarDados()
+    {
+        listaCidades = await cidadesService.GetCidadesAsync();
+        listaEstados = await estadosService.GetEstadosAsync();
+    }
+
+    private async Task Salvar()
+    {
+        if (cidadeAtual.CodCidade == 0)
+        {
+            await cidadesService.AddCidadeAsync(cidadeAtual);
+        }
+        else
+        {
+            await cidadesService.UpdateCidadeAsync(cidadeAtual);
+        }
+        cidadeAtual = new Cidades();
+        await CarregarDados();
+    }
+
+    private void Editar(Cidades c)
+    {
+        cidadeAtual = new Cidades
+        {
+            CodCidade = c.CodCidade,
+            Cidade = c.Cidade,
+            CodEstado = c.CodEstado
+        };
+    }
+
+    private async Task Excluir(int id)
+    {
+        await cidadesService.DeleteCidadeAsync(id);
+        await CarregarDados();
+    }
+
+    private void Cancelar()
+    {
+        cidadeAtual = new Cidades();
+    }
+}

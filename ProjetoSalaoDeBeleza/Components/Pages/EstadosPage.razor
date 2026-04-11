@@ -1,0 +1,129 @@
+﻿@page "/estados"
+@rendermode InteractiveServer
+@using ProjetoSalaoDeBeleza.Models
+@using ProjetoSalaoDeBeleza.Services
+@inject PaisesService paisesService
+@inject EstadosService estadosService
+@inject NavigationManager Navigation
+
+<h3>Cadastro de Estados</h3>
+
+<EditForm Model="@estadoAtual" OnValidSubmit="Salvar" FormName="formEstados">
+    <DataAnnotationsValidator />
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Nome do Estado</label>
+            <InputText @bind-Value="estadoAtual.Estado" class="form-control" />
+        </div>
+        <div class="col-md-2 mb-3">
+            <label class="form-label">UF</label>
+            <InputText @bind-Value="estadoAtual.UF" class="form-control" maxlength="2" />
+        </div>
+
+        <div class="col-md-4 mb-3 d-flex align-items-end">
+            <div class="flex-grow-1 me-2">
+                <label class="form-label">País</label>
+                <InputSelect @bind-Value="estadoAtual.CodPais" class="form-select">
+                    <option value="0">Selecione um país...</option>
+                    @foreach (var pais in listaPaises)
+                    {
+                        <option value="@pais.CodPais">@pais.Pais</option>
+                    }
+                </InputSelect>
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline-secondary" @onclick='() => Navigation.NavigateTo("/paises")' title="Cadastrar Novo País">
+                    + Novo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Estado</th>
+            <th>UF</th>
+            <th>Cód. País</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var estado in listaEstados)
+        {
+            <tr>
+                <td>@estado.CodEstado</td>
+                <td>@estado.Estado</td>
+                <td>@estado.UF</td>
+                <td>@estado.CodPais</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" @onclick="() => Editar(estado)">Editar</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => Excluir(estado.CodEstado)">Excluir</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Estados> listaEstados = new();
+    private List<Paises> listaPaises = new();
+
+    [SupplyParameterFromForm]
+    private Estados estadoAtual { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDados();
+    }
+
+    private async Task CarregarDados()
+    {
+        listaEstados = await estadosService.GetEstadosAsync();
+        listaPaises = await paisesService.GetPaisesAsync();
+    }
+
+    private async Task Salvar()
+    {
+        if (estadoAtual.CodEstado == 0)
+        {
+            await estadosService.AddEstadoAsync(estadoAtual);
+        }
+        else
+        {
+            await estadosService.UpdateEstadoAsync(estadoAtual);
+        }
+        estadoAtual = new Estados();
+        await CarregarDados();
+    }
+
+    private void Editar(Estados e)
+    {
+        estadoAtual = new Estados
+        {
+            CodEstado = e.CodEstado,
+            Estado = e.Estado,
+            UF = e.UF,
+            CodPais = e.CodPais
+        };
+    }
+
+    private async Task Excluir(int id)
+    {
+        await estadosService.DeleteEstadoAsync(id);
+        await CarregarDados();
+    }
+
+    private void Cancelar()
+    {
+        estadoAtual = new Estados();
+    }
+}

@@ -1,0 +1,113 @@
+﻿@page "/paises"
+@rendermode InteractiveServer
+@using ProjetoSalaoDeBeleza.Models
+@using ProjetoSalaoDeBeleza.Services
+@inject PaisesService paisesService
+
+<h3>Cadastro de Países</h3>
+
+<EditForm Model="@paisAtual" OnValidSubmit="Salvar" FormName="formPaises">
+    <div class="mb-2">
+        <label>País:</label>
+        <InputText @bind-Value="paisAtual.Pais" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Sigla:</label>
+        <InputText @bind-Value="paisAtual.Sigla" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>DDI:</label>
+        <InputText @bind-Value="paisAtual.DDI" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Moeda:</label>
+        <InputText @bind-Value="paisAtual.Moeda" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Salvar</button>
+    <button type="button" class="btn btn-secondary mt-2" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Cód</th>
+            <th>País</th>
+            <th>Sigla</th>
+            <th>DDI</th>
+            <th>Moeda</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in listaPaises)
+        {
+            <tr>
+                <td>@p.CodPais</td>
+                <td>@p.Pais</td>
+                <td>@p.Sigla</td>
+                <td>@p.DDI</td>
+                <td>@p.Moeda</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" @onclick="() => Editar(p)">Editar</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => Excluir(p.CodPais)">Excluir</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Paises> listaPaises = new();
+
+    [SupplyParameterFromForm]
+    private Paises paisAtual { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarPaises();
+    }
+
+    private async Task CarregarPaises()
+    {
+        listaPaises = await paisesService.GetPaisesAsync();
+    }
+
+    private async Task Salvar()
+    {
+        if (paisAtual.CodPais == 0)
+        {
+            await paisesService.AddPaisAsync(paisAtual);
+        }
+        else
+        {
+            await paisesService.UpdatePaisAsync(paisAtual);
+        }
+        paisAtual = new Paises();
+        await CarregarPaises();
+    }
+
+    private void Editar(Paises p)
+    {
+        paisAtual = new Paises
+        {
+            CodPais = p.CodPais,
+            Pais = p.Pais,
+            Sigla = p.Sigla,
+            DDI = p.DDI,
+            Moeda = p.Moeda
+        };
+    }
+
+    private async Task Excluir(int id)
+    {
+        await paisesService.DeletePaisAsync(id);
+        await CarregarPaises();
+    }
+
+    private void Cancelar()
+    {
+        paisAtual = new Paises();
+    }
+}

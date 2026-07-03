@@ -22,6 +22,7 @@ namespace ProjetoSalaoDeBeleza.Data
         public DbSet<ProjetoSalaoDeBeleza.Models.MarcasVeiculos> MarcasVeiculos { get; set; }
         public DbSet<ProjetoSalaoDeBeleza.Models.TiposVeiculos> TiposVeiculos { get; set; }
         public DbSet<ProjetoSalaoDeBeleza.Models.Veiculos> Veiculos { get; set; }
+        public DbSet<ProjetoSalaoDeBeleza.Models.FormasPagamento> FormasPagamento { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

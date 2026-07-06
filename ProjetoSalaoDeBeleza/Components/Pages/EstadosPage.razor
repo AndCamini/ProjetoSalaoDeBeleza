@@ -85,6 +85,27 @@
                         </InputSelect>
                     </div>
                 </div>
+                @if (estadoAtual.CodEstado != 0)
+                {
+                    <hr class="my-2" />
+                    <div class="row text-muted small">
+                        <div class="col-md-4">
+                            <label class="form-label">Cadastrado em</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   value="@estadoAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Última Alteração</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   value="@(estadoAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Alterado por</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   value="@(estadoAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                        </div>
+                    </div>
+                }
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="FecharModal">Cancelar</button>
                     <button type="button" class="btn btn-primary" @onclick="Salvar">Salvar</button>
@@ -111,6 +132,7 @@
                             <tr><th>Estado</th><td>@estadoExcluir.Estado</td></tr>
                             <tr><th>UF</th><td>@estadoExcluir.UF</td></tr>
                             <tr><th>País</th><td>@listaPaises.FirstOrDefault(p => p.CodPais == estadoExcluir.CodPais)?.Pais</td></tr>
+                            
                         </tbody>
                     </table>
                 </div>
@@ -157,7 +179,10 @@
             CodEstado = e.CodEstado,
             Estado = e.Estado,
             UF = e.UF,
-            CodPais = e.CodPais
+            CodPais = e.CodPais,
+            DataCadastro = e.DataCadastro,
+            DataUltimaAlteracao = e.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = e.UsuarioUltimaAlteracao
         };
         mensagemErroModal = null;
         modalAberto = true;

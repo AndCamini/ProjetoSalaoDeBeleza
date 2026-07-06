@@ -86,6 +86,27 @@
                         </div>
                     </div>
                 </div>
+                @if (paisAtual.CodPais != 0)
+                {
+                    <hr class="my-2" />
+                    <div class="row text-muted small">
+                        <div class="col-md-4">
+                            <label class="form-label">Cadastrado em</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   value="@paisAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Última Alteração</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   value="@(paisAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Alterado por</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   value="@(paisAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                        </div>
+                    </div>
+                }
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="FecharModal">Cancelar</button>
                     <button type="button" class="btn btn-primary" @onclick="Salvar">Salvar</button>
@@ -160,7 +181,10 @@
             Pais = p.Pais,
             Sigla = p.Sigla,
             DDI = p.DDI,
-            Moeda = p.Moeda
+            Moeda = p.Moeda,
+            DataCadastro = p.DataCadastro,
+            DataUltimaAlteracao = p.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = p.UsuarioUltimaAlteracao
         };
         editContext = new EditContext(paisAtual);
         mensagemErroModal = null;

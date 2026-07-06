@@ -75,6 +75,27 @@
                             <label class="form-check-label" for="ativoCheck">Ativo</label>
                         </div>
                     </div>
+                    @if (categoriaAtual.CodCategoria != 0)
+                    {
+                        <hr class="my-2" />
+                        <div class="row text-muted small">
+                            <div class="col-md-4">
+                                <label class="form-label">Cadastrado em</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@categoriaAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Última Alteração</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(categoriaAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Alterado por</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(categoriaAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                            </div>
+                        </div>
+                    }
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @onclick="FecharModal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Salvar</button>
@@ -144,7 +165,10 @@
         {
             CodCategoria = c.CodCategoria,
             Categoria = c.Categoria,
-            Ativo = c.Ativo
+            Ativo = c.Ativo,
+            DataCadastro = c.DataCadastro,
+            DataUltimaAlteracao = c.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = c.UsuarioUltimaAlteracao
         };
         mensagemErroModal = null;
         modalAberto = true;

@@ -31,6 +31,15 @@ namespace ProjetoSalaoDeBeleza.Services
             cliente.Logradouro = cliente.Logradouro?.ToUpper();
             cliente.Bairro = cliente.Bairro?.ToUpper();
             cliente.Complemento = cliente.Complemento?.ToUpper();
+
+            if (!string.IsNullOrWhiteSpace(cliente.CPF) &&
+                await _context.Clientes.AnyAsync(c => c.CPF == cliente.CPF))
+                throw new Exception("Já existe um cliente com este CPF/CNPJ.");
+
+            if (!string.IsNullOrWhiteSpace(cliente.Email) &&
+                await _context.Clientes.AnyAsync(c => c.Email == cliente.Email))
+                throw new Exception("Já existe um cliente com este e-mail.");
+
             cliente.oCidade = null;
             cliente.DataCadastro = DateTime.UtcNow;
             cliente.DataUltimaAlteracao = DateTime.UtcNow;
@@ -42,23 +51,39 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task UpdateClienteAsync(Clientes cliente)
         {
+            cliente.Nome = cliente.Nome?.ToUpper() ?? string.Empty;
+            cliente.CPF = cliente.CPF?.ToUpper() ?? string.Empty;
+            cliente.Logradouro = cliente.Logradouro?.ToUpper();
+            cliente.Bairro = cliente.Bairro?.ToUpper();
+            cliente.Complemento = cliente.Complemento?.ToUpper();
+
+            if (!string.IsNullOrWhiteSpace(cliente.CPF) &&
+                await _context.Clientes.AnyAsync(c => c.CPF == cliente.CPF && c.CodPessoa != cliente.CodPessoa))
+                throw new Exception("Já existe um cliente com este CPF/CNPJ.");
+
+            if (!string.IsNullOrWhiteSpace(cliente.Email) &&
+                await _context.Clientes.AnyAsync(c => c.Email == cliente.Email && c.CodPessoa != cliente.CodPessoa))
+                throw new Exception("Já existe um cliente com este e-mail.");
+
             var existente = await _context.Clientes.FindAsync(cliente.CodPessoa);
             if (existente == null) throw new Exception("Cliente não encontrado.");
 
-            existente.Nome = cliente.Nome?.ToUpper() ?? string.Empty;
-            existente.CPF = cliente.CPF?.ToUpper() ?? string.Empty;
+            existente.Nome = cliente.Nome;
+            existente.CPF = cliente.CPF;
             existente.Email = cliente.Email;
             existente.Telefone = cliente.Telefone;
             existente.DataNascimento = cliente.DataNascimento;
             existente.CodCidade = cliente.CodCidade;
-            existente.Logradouro = cliente.Logradouro?.ToUpper();
-            existente.Bairro = cliente.Bairro?.ToUpper();
-            existente.Complemento = cliente.Complemento?.ToUpper();
+            existente.Logradouro = cliente.Logradouro;
+            existente.Bairro = cliente.Bairro;
+            existente.Complemento = cliente.Complemento;
             existente.Numero = cliente.Numero;
             existente.CEP = cliente.CEP;
             existente.Observacoes = cliente.Observacoes;
             existente.RecebeNotificacoes = cliente.RecebeNotificacoes;
             existente.Ativo = cliente.Ativo;
+            existente.PessoaJuridica = cliente.PessoaJuridica;
+            existente.CodCondicaoPagamento = cliente.CodCondicaoPagamento;
             existente.DataUltimaAlteracao = DateTime.UtcNow;
             existente.UsuarioUltimaAlteracao = "sistema";
 

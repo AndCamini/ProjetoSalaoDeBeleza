@@ -4,6 +4,8 @@
 @using ProjetoSalaoDeBeleza.Services
 @inject ClientesService clientesService
 @inject CidadesService cidadesService
+@inject CondicaoPagamentoService condicaoPagamentoService
+@inject EstadosService estadosService
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0">Clientes</h3>
@@ -30,7 +32,8 @@
         <tr>
             <th>Cód</th>
             <th>Nome</th>
-            <th>CPF</th>
+            <th>Tipo</th>
+            <th>CPF/CNPJ</th>
             <th>Email</th>
             <th>Telefone</th>
             <th>Nascimento</th>
@@ -46,6 +49,7 @@
             <tr>
                 <td>@c.CodPessoa</td>
                 <td>@c.Nome</td>
+                <td>@(c.PessoaJuridica ? "PJ" : "PF")</td>
                 <td>@c.CPF</td>
                 <td>@c.Email</td>
                 <td>@c.Telefone</td>
@@ -79,15 +83,24 @@
                         {
                             <div class="alert alert-danger">@mensagemErroModal</div>
                         }
+                        <div class="row mb-3">
+                            <div class="col-auto form-check ms-3">
+                                <InputCheckbox @bind-Value="clienteAtual.PessoaJuridica" class="form-check-input" id="pjCheckCliente"
+                                               @onchange="() => clienteAtual.CPF = string.Empty" />
+                                <label class="form-check-label" for="pjCheckCliente">Pessoa Jurídica</label>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-8 mb-3">
-                                <label class="form-label">Nome</label>
+                                <label class="form-label">Nome / Razão Social</label>
                                 <InputText @bind-Value="clienteAtual.Nome" class="form-control" />
                                 <ValidationMessage For="@(() => clienteAtual.Nome)" />
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label">CPF</label>
-                                <InputText @bind-Value="clienteAtual.CPF" class="form-control" maxlength="11" />
+                                <label class="form-label">@(clienteAtual.PessoaJuridica ? "CNPJ" : "CPF")</label>
+                                <InputText @bind-Value="clienteAtual.CPF"
+                                           class="form-control"
+                                           maxlength="@(clienteAtual.PessoaJuridica ? 14 : 11)" />
                                 <ValidationMessage For="@(() => clienteAtual.CPF)" />
                             </div>
                         </div>
@@ -105,13 +118,70 @@
                                 <InputDate @bind-Value="clienteAtual.DataNascimento" class="form-control" />
                             </div>
                         </div>
+                        <div class="row align-items-end mb-3">
+                            <div class="col">
+                                <label class="form-label">Cidade</label>
+                                <InputSelect @bind-Value="clienteAtual.CodCidade" class="form-select">
+                                    <option value="0">Selecione...</option>
+                                    @foreach (var cidade in listaCidades)
+                                    {
+                                        <option value="@cidade.CodCidade">@cidade.Cidade</option>
+                                    }
+                                </InputSelect>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary"
+                                        @onclick="() => modalNovaCidadeAberto = true">
+                                    + Nova
+                                </button>
+                            </div>
+                        </div>
+
+                        @* Mini-modal Nova Cidade *@
+                        @if (modalNovaCidadeAberto)
+                        {
+                            <div class="card border-primary mb-3">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between">
+                                    <span>Nova Cidade</span>
+                                    <button type="button" class="btn-close btn-close-white btn-sm"
+                                            @onclick="() => { modalNovaCidadeAberto = false; novaCidade = new(); erroNovaCidade = null; }"></button>
+                                </div>
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(erroNovaCidade))
+                                    {
+                                        <div class="alert alert-danger py-1">@erroNovaCidade</div>
+                                    }
+                                    <div class="row">
+                                        <div class="col-md-5 mb-2">
+                                            <label class="form-label">Nome</label>
+                                            <InputText @bind-Value="novaCidade.Cidade" class="form-control" />
+                                        </div>
+                                        <div class="col-md-5 mb-2">
+                                            <label class="form-label">Estado</label>
+                                            <InputSelect @bind-Value="novaCidade.CodEstado" class="form-select">
+                                                <option value="0">Selecione...</option>
+                                                @foreach (var estado in listaEstados)
+                                                {
+                                                    <option value="@estado.CodEstado">@estado.Estado - @estado.UF</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">DDD</label>
+                                            <InputNumber @bind-Value="novaCidade.DDD" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary btn-sm mt-1" @onclick="SalvarNovaCidade">Salvar</button>
+                                </div>
+                            </div>
+                        }
                         <div class="mb-3">
-                            <label class="form-label">Cidade</label>
-                            <InputSelect @bind-Value="clienteAtual.CodCidade" class="form-select">
-                                <option value="0">Selecione...</option>
-                                @foreach (var cidade in listaCidades)
+                            <label class="form-label">Condição de Pagamento</label>
+                            <InputSelect @bind-Value="clienteAtual.CodCondicaoPagamento" class="form-select">
+                                <option value="">Nenhuma</option>
+                                @foreach (var cp in listaCondicoes)
                                 {
-                                    <option value="@cidade.CodCidade">@cidade.Cidade</option>
+                                    <option value="@cp.CodCondicao">@cp.Descricao</option>
                                 }
                             </InputSelect>
                         </div>
@@ -156,6 +226,27 @@
                             </div>
                         </div>
                     </div>
+                    @if (clienteAtual.CodPessoa != 0)
+                    {
+                        <hr class="my-2" />
+                        <div class="row text-muted small">
+                            <div class="col-md-4">
+                                <label class="form-label">Cadastrado em</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@clienteAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Última Alteração</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(clienteAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Alterado por</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(clienteAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                            </div>
+                        </div>
+                    }
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @onclick="FecharModalForm">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Salvar</button>
@@ -190,6 +281,7 @@
                             <tr><th>Cadastro</th><td>@clienteExcluir.DataCadastro.ToString("dd/MM/yyyy")</td></tr>
                             <tr><th>Total Visitas</th><td>@clienteExcluir.TotalVisitas</td></tr>
                             <tr><th>Total Gasto</th><td>@clienteExcluir.TotalGasto.ToString("C2")</td></tr>
+                            
                             <tr><th>Ativo</th><td>@(clienteExcluir.Ativo ? "Sim" : "Não")</td></tr>
                         </tbody>
                     </table>
@@ -213,10 +305,17 @@
     private string? mensagemErro;
     private string? mensagemSucesso;
     private string? mensagemErroModal;
+    private List<CondicaoPagamento> listaCondicoes = new();
+    private List<Estados> listaEstados = new();
+    private Cidades novaCidade = new();
+    private bool modalNovaCidadeAberto = false;
+    private string? erroNovaCidade;
 
     protected override async Task OnInitializedAsync()
     {
         listaCidades = await cidadesService.GetCidadesAsync();
+        listaCondicoes = await condicaoPagamentoService.GetCondicoesPagamentoAsync();
+        listaEstados = await estadosService.GetEstadosAsync();
         await CarregarClientes();
     }
 
@@ -254,7 +353,11 @@
             Logradouro = c.Logradouro,
             Numero = c.Numero,
             Bairro = c.Bairro,
-            Complemento = c.Complemento
+            Complemento = c.Complemento,
+            PessoaJuridica = c.PessoaJuridica,
+            CodCondicaoPagamento = c.CodCondicaoPagamento,
+            DataUltimaAlteracao = c.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = c.UsuarioUltimaAlteracao
         };
         mensagemErroModal = null;
         modalFormAberto = true;
@@ -296,6 +399,35 @@
         catch (Exception ex)
         {
             mensagemErroModal = ex.Message;
+        }
+    }
+
+    private async Task SalvarNovaCidade()
+    {
+        erroNovaCidade = null;
+        if (string.IsNullOrWhiteSpace(novaCidade.Cidade))
+        {
+            erroNovaCidade = "Nome é obrigatório.";
+            return;
+        }
+        if (novaCidade.CodEstado == 0)
+        {
+            erroNovaCidade = "Selecione um estado.";
+            return;
+        }
+        try
+        {
+            await cidadesService.AddCidadeAsync(novaCidade);
+            listaCidades = await cidadesService.GetCidadesAsync();
+            clienteAtual.CodCidade = listaCidades
+                .First(c => c.Cidade == novaCidade.Cidade.ToUpper() && c.CodEstado == novaCidade.CodEstado)
+                .CodCidade;
+            novaCidade = new Cidades();
+            modalNovaCidadeAberto = false;
+        }
+        catch (Exception ex)
+        {
+            erroNovaCidade = ex.Message;
         }
     }
 

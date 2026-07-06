@@ -226,7 +226,27 @@
                                 }
                             </InputSelect>
                         </div>
-
+                        @if (veiculoAtual.CodVeiculo != 0)
+                        {
+                            <hr class="my-2" />
+                            <div class="row text-muted small">
+                                <div class="col-md-4">
+                                    <label class="form-label">Cadastrado em</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           value="@veiculoAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Última Alteração</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           value="@(veiculoAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Alterado por</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           value="@(veiculoAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                                </div>
+                            </div>
+                        }
                         <div class="mb-3 form-check">
                             <InputCheckbox @bind-Value="veiculoAtual.Ativo" class="form-check-input" id="ativoCheckVeic" />
                             <label class="form-check-label" for="ativoCheckVeic">Ativo</label>
@@ -336,6 +356,9 @@
             CodMarca = v.CodMarca,
             CodTipo = v.CodTipo,
             CodTransportador = v.CodTransportador,
+            DataCadastro = v.DataCadastro,
+            DataUltimaAlteracao = v.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = v.UsuarioUltimaAlteracao,
             Ativo = v.Ativo
         };
         mensagemErroModal = null;

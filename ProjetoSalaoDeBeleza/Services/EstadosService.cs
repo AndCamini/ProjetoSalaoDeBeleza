@@ -24,18 +24,39 @@ namespace ProjetoSalaoDeBeleza.Services
             estado.Estado = estado.Estado?.ToUpper() ?? string.Empty;
             estado.UF = estado.UF?.ToUpper() ?? string.Empty;
 
+            if (await _context.Estados.AnyAsync(e => e.Estado == estado.Estado))
+                throw new Exception("Já existe um estado com esse nome.");
+
+            if (await _context.Estados.AnyAsync(e => e.UF == estado.UF && e.CodPais == estado.CodPais))
+                throw new Exception("Já existe um estado com essa UF neste país.");
+
+            estado.DataCadastro = DateTime.UtcNow;
+            estado.DataUltimaAlteracao = DateTime.UtcNow;
+            estado.UsuarioUltimaAlteracao = "sistema";
+
             _context.Estados.Add(estado);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateEstadoAsync(Estados estado)
         {
+            estado.Estado = estado.Estado?.ToUpper() ?? string.Empty;
+            estado.UF = estado.UF?.ToUpper() ?? string.Empty;
+
+            if (await _context.Estados.AnyAsync(e => e.Estado == estado.Estado && e.CodEstado != estado.CodEstado))
+                throw new Exception("Já existe um estado com esse nome.");
+
+            if (await _context.Estados.AnyAsync(e => e.UF == estado.UF && e.CodPais == estado.CodPais && e.CodEstado != estado.CodEstado))
+                throw new Exception("Já existe um estado com essa UF neste país.");
+
             var existente = await _context.Estados.FindAsync(estado.CodEstado);
             if (existente == null) throw new Exception("Estado não encontrado.");
 
-            existente.Estado = estado.Estado?.ToUpper() ?? string.Empty;
-            existente.UF = estado.UF?.ToUpper() ?? string.Empty;
+            existente.Estado = estado.Estado;
+            existente.UF = estado.UF;
             existente.CodPais = estado.CodPais;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }

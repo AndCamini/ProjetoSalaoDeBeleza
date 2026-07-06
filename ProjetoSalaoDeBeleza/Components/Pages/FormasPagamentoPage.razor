@@ -76,6 +76,27 @@
                             <label class="form-check-label" for="ativoCheckForma">Ativo</label>
                         </div>
                     </div>
+                    @if (formaAtual.CodFormaPagamento != 0)
+                    {
+                        <hr class="my-2" />
+                        <div class="row text-muted small">
+                            <div class="col-md-4">
+                                <label class="form-label">Cadastrado em</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@formaAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Última Alteração</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(formaAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Alterado por</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(formaAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                            </div>
+                        </div>
+                    }
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @onclick="FecharModalForm">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Salvar</button>
@@ -102,6 +123,7 @@
                         <tbody>
                             <tr><th>Código</th><td>@formaExcluir.CodFormaPagamento</td></tr>
                             <tr><th>Descrição</th><td>@formaExcluir.FormaPagamento</td></tr>
+                            
                             <tr><th>Ativo</th><td>@(formaExcluir.Ativo ? "Sim" : "Não")</td></tr>
                         </tbody>
                     </table>
@@ -148,6 +170,9 @@
         {
             CodFormaPagamento = f.CodFormaPagamento,
             FormaPagamento = f.FormaPagamento,
+            DataCadastro = f.DataCadastro,
+            DataUltimaAlteracao = f.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = f.UsuarioUltimaAlteracao,
             Ativo = f.Ativo
         };
         mensagemErroModal = null;

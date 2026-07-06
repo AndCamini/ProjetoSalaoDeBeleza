@@ -99,8 +99,16 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Preço de Custo</label>
-                                <InputNumber @bind-Value="produtoAtual.PrecoCusto" class="form-control" />
-                                <ValidationMessage For="@(() => produtoAtual.PrecoCusto)" />
+                                @if (produtoAtual.CodProduto == 0)
+                                {
+                                    <InputNumber @bind-Value="produtoAtual.PrecoCusto" class="form-control" />
+                                    <ValidationMessage For="@(() => produtoAtual.PrecoCusto)" />
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control" value="@produtoAtual.PrecoCusto.ToString("C2")" disabled />
+                                    <small class="text-muted">Custo não pode ser alterado aqui.</small>
+                                }
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Preço de Venda</label>
@@ -111,8 +119,16 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Estoque</label>
-                                <InputNumber @bind-Value="produtoAtual.Estoque" class="form-control" />
-                                <ValidationMessage For="@(() => produtoAtual.Estoque)" />
+                                @if (produtoAtual.CodProduto == 0)
+                                {
+                                    <InputNumber @bind-Value="produtoAtual.Estoque" class="form-control" />
+                                    <ValidationMessage For="@(() => produtoAtual.Estoque)" />
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control" value="@produtoAtual.Estoque" disabled />
+                                    <small class="text-muted">Estoque é atualizado via movimentação.</small>
+                                }
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Unidade de Medida</label>
@@ -120,6 +136,24 @@
                                 <ValidationMessage For="@(() => produtoAtual.UnidadeMedida)" />
                             </div>
                         </div>
+                        @if (produtoAtual.CodProduto != 0)
+                        {
+                            <hr class="my-2" />
+                            <div class="row text-muted small">
+                                <div class="col-md-4">
+                                    <label class="form-label">Cadastrado em</label>
+                                    <input type="text" class="form-control form-control-sm" value="@produtoAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Última Alteração</label>
+                                    <input type="text" class="form-control form-control-sm" value="@(produtoAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Alterado por</label>
+                                    <input type="text" class="form-control form-control-sm" value="@(produtoAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                                </div>
+                            </div>
+                        }
                         <div class="mb-3 form-check">
                             <InputCheckbox @bind-Value="produtoAtual.Ativo" class="form-check-input" id="ativoCheckProd" />
                             <label class="form-check-label" for="ativoCheckProd">Ativo</label>
@@ -157,6 +191,7 @@
                             <tr><th>Preço de Venda</th><td>@produtoExcluir.PrecoVenda.ToString("C2")</td></tr>
                             <tr><th>Estoque</th><td>@produtoExcluir.Estoque</td></tr>
                             <tr><th>Unidade</th><td>@produtoExcluir.UnidadeMedida</td></tr>
+                            
                             <tr><th>Ativo</th><td>@(produtoExcluir.Ativo ? "Sim" : "Não")</td></tr>
                         </tbody>
                     </table>
@@ -211,7 +246,10 @@
             Estoque = p.Estoque,
             UnidadeMedida = p.UnidadeMedida,
             Ativo = p.Ativo,
-            CodCategoria = p.CodCategoria
+            CodCategoria = p.CodCategoria,
+            DataCadastro = p.DataCadastro,                         
+            DataUltimaAlteracao = p.DataUltimaAlteracao,           
+            UsuarioUltimaAlteracao = p.UsuarioUltimaAlteracao
         };
         mensagemErroModal = null;
         modalFormAberto = true;

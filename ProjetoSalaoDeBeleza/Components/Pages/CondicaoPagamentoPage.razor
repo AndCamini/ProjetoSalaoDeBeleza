@@ -190,6 +190,27 @@
                             <label class="form-check-label" for="ativoCheckCond">Ativo</label>
                         </div>
                     </div>
+                    @if (condicaoAtual.CodCondicao != 0)
+                    {
+                        <hr class="my-2" />
+                        <div class="row text-muted small">
+                            <div class="col-md-4">
+                                <label class="form-label">Cadastrado em</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@condicaoAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Última Alteração</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(condicaoAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Alterado por</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(condicaoAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                            </div>
+                        </div>
+                    }
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @onclick="FecharModalForm">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Salvar</button>
@@ -221,6 +242,7 @@
                             <tr><th>Juros</th><td>@condicaoExcluir.Juros.ToString("F2")%</td></tr>
                             <tr><th>Multa</th><td>@condicaoExcluir.Multa.ToString("F2")%</td></tr>
                             <tr><th>Desconto</th><td>@condicaoExcluir.Desconto.ToString("F2")%</td></tr>
+                            
                             <tr><th>Ativo</th><td>@(condicaoExcluir.Ativo ? "Sim" : "Não")</td></tr>
                         </tbody>
                     </table>
@@ -291,6 +313,9 @@
             Juros = c.Juros,
             Multa = c.Multa,
             Desconto = c.Desconto,
+            DataCadastro = c.DataCadastro,
+            DataUltimaAlteracao = c.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = c.UsuarioUltimaAlteracao,
             Ativo = c.Ativo,
             Parcelas = c.Parcelas.Select(p => new CondicaoPagamentoParcela
             {

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjetoSalaoDeBeleza.Data;
@@ -11,9 +12,11 @@ using ProjetoSalaoDeBeleza.Data;
 namespace ProjetoSalaoDeBeleza.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260706141428_NovosAjustes")]
+    partial class NovosAjustes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -290,15 +293,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<int?>("DDD")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
-
                     b.HasKey("CodCidade");
 
                     b.HasIndex("CodEstado");
@@ -393,12 +387,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<int>("CodPais")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasMaxLength(25)
@@ -408,9 +396,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("character varying(3)");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
 
                     b.HasKey("CodEstado");
 
@@ -577,12 +562,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("character varying(5)");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Moeda")
                         .IsRequired()
                         .HasMaxLength(25)
@@ -597,9 +576,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("character varying(3)");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
 
                     b.HasKey("CodPais");
 

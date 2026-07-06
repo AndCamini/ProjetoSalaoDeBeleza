@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjetoSalaoDeBeleza.Components.Account.Pages.Manage;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProjetoSalaoDeBeleza.Models
 {
@@ -15,5 +17,8 @@ namespace ProjetoSalaoDeBeleza.Models
         public string DDI { get; set; }
         [MaxLength(25)]
         public string Moeda { get; set; }
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public DateTime? DataUltimaAlteracao { get; set; }
+        public string? UsuarioUltimaAlteracao { get; set; }
     }
 }

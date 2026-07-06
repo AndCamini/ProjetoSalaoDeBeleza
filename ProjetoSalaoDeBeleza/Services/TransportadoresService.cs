@@ -31,6 +31,18 @@ namespace ProjetoSalaoDeBeleza.Services
             if (string.IsNullOrWhiteSpace(transportador.CPF) && string.IsNullOrWhiteSpace(transportador.CNPJ))
                 throw new Exception("Informe CPF ou CNPJ.");
 
+            if (!string.IsNullOrWhiteSpace(transportador.CPF) &&
+                await _context.Transportadores.AnyAsync(t => t.CPF == transportador.CPF))
+                throw new Exception("Já existe um transportador com este CPF.");
+
+            if (!string.IsNullOrWhiteSpace(transportador.CNPJ) &&
+                await _context.Transportadores.AnyAsync(t => t.CNPJ == transportador.CNPJ))
+                throw new Exception("Já existe um transportador com este CNPJ.");
+
+            if (!string.IsNullOrWhiteSpace(transportador.Email) &&
+                await _context.Transportadores.AnyAsync(t => t.Email == transportador.Email))
+                throw new Exception("Já existe um transportador com este e-mail.");
+
             transportador.oCidade = null;
             transportador.DataCadastro = DateTime.UtcNow;
             transportador.DataUltimaAlteracao = DateTime.UtcNow;
@@ -51,6 +63,21 @@ namespace ProjetoSalaoDeBeleza.Services
 
             if (string.IsNullOrWhiteSpace(transportador.CPF) && string.IsNullOrWhiteSpace(transportador.CNPJ))
                 throw new Exception("Informe CPF ou CNPJ.");
+
+            if (!string.IsNullOrWhiteSpace(transportador.CPF) &&
+                await _context.Transportadores.AnyAsync(t => t.CPF == transportador.CPF
+                    && t.CodTransportador != transportador.CodTransportador))
+                throw new Exception("Já existe um transportador com este CPF.");
+
+            if (!string.IsNullOrWhiteSpace(transportador.CNPJ) &&
+                await _context.Transportadores.AnyAsync(t => t.CNPJ == transportador.CNPJ
+                    && t.CodTransportador != transportador.CodTransportador))
+                throw new Exception("Já existe um transportador com este CNPJ.");
+
+            if (!string.IsNullOrWhiteSpace(transportador.Email) &&
+                await _context.Transportadores.AnyAsync(t => t.Email == transportador.Email
+                    && t.CodTransportador != transportador.CodTransportador))
+                throw new Exception("Já existe um transportador com este e-mail.");
 
             var existente = await _context.Transportadores.FindAsync(transportador.CodTransportador);
             if (existente == null) throw new Exception("Transportador não encontrado.");

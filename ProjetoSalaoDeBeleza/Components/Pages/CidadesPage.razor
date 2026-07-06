@@ -84,6 +84,27 @@
                         <label class="form-label">DDD</label>
                         <InputNumber @bind-Value="cidadeAtual.DDD" class="form-control" style="max-width: 100px;" />
                     </div>
+                    @if (cidadeAtual.CodCidade != 0)
+                    {
+                        <hr class="my-2" />
+                        <div class="row text-muted small">
+                            <div class="col-md-4">
+                                <label class="form-label">Cadastrado em</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@cidadeAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Última Alteração</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(cidadeAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Alterado por</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       value="@(cidadeAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                            </div>
+                        </div>
+                    }
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="FecharModal">Cancelar</button>
@@ -111,6 +132,7 @@
                             <tr><th>Cidade</th><td>@cidadeExcluir.Cidade</td></tr>
                             <tr><th>Estado</th><td>@listaEstados.FirstOrDefault(e => e.CodEstado == cidadeExcluir.CodEstado)?.Estado</td></tr>
                             <tr><th>DDD</th><td>@cidadeExcluir.DDD</td></tr>
+                            
                         </tbody>
                     </table>
                 </div>
@@ -157,7 +179,10 @@
             CodCidade = c.CodCidade,
             Cidade = c.Cidade,
             CodEstado = c.CodEstado,
-            DDD = c.DDD
+            DDD = c.DDD,
+            DataCadastro = c.DataCadastro,
+            DataUltimaAlteracao = c.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = c.UsuarioUltimaAlteracao
         };
         mensagemErroModal = null;
         modalAberto = true;

@@ -24,19 +24,42 @@ namespace ProjetoSalaoDeBeleza.Services
             pais.DDI = pais.DDI?.ToUpper() ?? string.Empty;
             pais.Moeda = pais.Moeda?.ToUpper() ?? string.Empty;
 
+            if (await _context.Paises.AnyAsync(p => p.Pais == pais.Pais))
+                throw new Exception("Já existe um país com esse nome.");
+
+            if (await _context.Paises.AnyAsync(p => p.Sigla == pais.Sigla))
+                throw new Exception("Já existe um país com essa sigla.");
+
+            pais.DataCadastro = DateTime.UtcNow;
+            pais.DataUltimaAlteracao = DateTime.UtcNow;
+            pais.UsuarioUltimaAlteracao = "sistema";
+
             _context.Paises.Add(pais);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdatePaisAsync(Paises pais)
         {
+            pais.Pais = pais.Pais?.ToUpper() ?? string.Empty;
+            pais.Sigla = pais.Sigla?.ToUpper() ?? string.Empty;
+            pais.DDI = pais.DDI?.ToUpper() ?? string.Empty;
+            pais.Moeda = pais.Moeda?.ToUpper() ?? string.Empty;
+
+            if (await _context.Paises.AnyAsync(p => p.Pais == pais.Pais && p.CodPais != pais.CodPais))
+                throw new Exception("Já existe um país com esse nome.");
+
+            if (await _context.Paises.AnyAsync(p => p.Sigla == pais.Sigla && p.CodPais != pais.CodPais))
+                throw new Exception("Já existe um país com essa sigla.");
+
             var existente = await _context.Paises.FindAsync(pais.CodPais);
             if (existente == null) throw new Exception("País não encontrado.");
 
-            existente.Pais = pais.Pais?.ToUpper() ?? string.Empty;
-            existente.Sigla = pais.Sigla?.ToUpper() ?? string.Empty;
-            existente.DDI = pais.DDI?.ToUpper() ?? string.Empty;
-            existente.Moeda = pais.Moeda?.ToUpper() ?? string.Empty;
+            existente.Pais = pais.Pais;
+            existente.Sigla = pais.Sigla;
+            existente.DDI = pais.DDI;
+            existente.Moeda = pais.Moeda;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }

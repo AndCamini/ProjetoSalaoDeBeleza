@@ -4,6 +4,7 @@
 @using ProjetoSalaoDeBeleza.Services
 @inject FuncionariosService funcionariosService
 @inject CidadesService cidadesService
+@inject EstadosService estadosService
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0">Funcionários</h3>
@@ -30,7 +31,8 @@
         <tr>
             <th>Cód</th>
             <th>Nome</th>
-            <th>CPF</th>
+            <th>Tipo</th>
+            <th>CPF/CNPJ</th>
             <th>Cargo</th>
             <th>Salário</th>
             <th>Admissão</th>
@@ -45,6 +47,7 @@
             <tr>
                 <td>@f.CodPessoa</td>
                 <td>@f.Nome</td>
+                <td>@(f.PessoaJuridica ? "PJ" : "PF")</td>
                 <td>@f.CPF</td>
                 <td>@f.Cargo</td>
                 <td>@f.Salario.ToString("C2")</td>
@@ -77,15 +80,24 @@
                         {
                             <div class="alert alert-danger">@mensagemErroModal</div>
                         }
+                        <div class="row mb-3">
+                            <div class="col-auto form-check ms-3">
+                                <InputCheckbox @bind-Value="funcionarioAtual.PessoaJuridica" class="form-check-input" id="pjCheckFunc"
+                                               @onchange="() => funcionarioAtual.CPF = string.Empty" />
+                                <label class="form-check-label" for="pjCheckFunc">Pessoa Jurídica</label>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-8 mb-3">
-                                <label class="form-label">Nome</label>
+                                <label class="form-label">Nome / Razão Social</label>
                                 <InputText @bind-Value="funcionarioAtual.Nome" class="form-control" />
                                 <ValidationMessage For="@(() => funcionarioAtual.Nome)" />
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label">CPF</label>
-                                <InputText @bind-Value="funcionarioAtual.CPF" class="form-control" maxlength="11" />
+                                <label class="form-label">@(funcionarioAtual.PessoaJuridica ? "CNPJ" : "CPF")</label>
+                                <InputText @bind-Value="funcionarioAtual.CPF"
+                                           class="form-control"
+                                           maxlength="@(funcionarioAtual.PessoaJuridica ? 14 : 11)" />
                                 <ValidationMessage For="@(() => funcionarioAtual.CPF)" />
                             </div>
                         </div>
@@ -104,16 +116,63 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Cidade</label>
-                                <InputSelect @bind-Value="funcionarioAtual.CodCidade" class="form-select">
-                                    <option value="0">Selecione...</option>
-                                    @foreach (var cidade in listaCidades)
-                                    {
-                                        <option value="@cidade.CodCidade">@cidade.Cidade</option>
-                                    }
-                                </InputSelect>
+                            <div class="row align-items-end mb-3">
+                                <div class="col">
+                                    <label class="form-label">Cidade</label>
+                                    <InputSelect @bind-Value="funcionarioAtual.CodCidade" class="form-select">
+                                        <option value="0">Selecione...</option>
+                                        @foreach (var cidade in listaCidades)
+                                        {
+                                            <option value="@cidade.CodCidade">@cidade.Cidade</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                            @onclick="() => modalNovaCidadeAberto = true">
+                                        + Nova
+                                    </button>
+                                </div>
                             </div>
+
+                            @* Mini-modal Nova Cidade *@
+                            @if (modalNovaCidadeAberto)
+                            {
+                                <div class="card border-primary mb-3">
+                                    <div class="card-header bg-primary text-white d-flex justify-content-between">
+                                        <span>Nova Cidade</span>
+                                        <button type="button" class="btn-close btn-close-white btn-sm"
+                                                @onclick="() => { modalNovaCidadeAberto = false; novaCidade = new(); erroNovaCidade = null; }"></button>
+                                    </div>
+                                    <div class="card-body">
+                                        @if (!string.IsNullOrEmpty(erroNovaCidade))
+                                        {
+                                            <div class="alert alert-danger py-1">@erroNovaCidade</div>
+                                        }
+                                        <div class="row">
+                                            <div class="col-md-5 mb-2">
+                                                <label class="form-label">Nome</label>
+                                                <InputText @bind-Value="novaCidade.Cidade" class="form-control" />
+                                            </div>
+                                            <div class="col-md-5 mb-2">
+                                                <label class="form-label">Estado</label>
+                                                <InputSelect @bind-Value="novaCidade.CodEstado" class="form-select">
+                                                    <option value="0">Selecione...</option>
+                                                    @foreach (var estado in listaEstados)
+                                                    {
+                                                        <option value="@estado.CodEstado">@estado.Estado - @estado.UF</option>
+                                                    }
+                                                </InputSelect>
+                                            </div>
+                                            <div class="col-md-2 mb-2">
+                                                <label class="form-label">DDD</label>
+                                                <InputNumber @bind-Value="novaCidade.DDD" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-primary btn-sm mt-1" @onclick="SalvarNovaCidade">Salvar</button>
+                                    </div>
+                                </div>
+                            }
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Cargo</label>
                                 <InputText @bind-Value="funcionarioAtual.Cargo" class="form-control" maxlength="30" />
@@ -165,6 +224,27 @@
                                 <InputDate @bind-Value="funcionarioAtual.DataDemissao" class="form-control" />
                             </div>
                         </div>
+                        @if (funcionarioAtual.CodPessoa != 0)
+                        {
+                            <hr class="my-2" />
+                            <div class="row text-muted small">
+                                <div class="col-md-4">
+                                    <label class="form-label">Cadastrado em</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           value="@funcionarioAtual.DataCadastro.ToString("dd/MM/yyyy HH:mm")" disabled />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Última Alteração</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           value="@(funcionarioAtual.DataUltimaAlteracao?.ToString("dd/MM/yyyy HH:mm") ?? "—")" disabled />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Alterado por</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           value="@(funcionarioAtual.UsuarioUltimaAlteracao ?? "—")" disabled />
+                                </div>
+                            </div>
+                        }
                         <div class="mb-3 form-check">
                             <InputCheckbox @bind-Value="funcionarioAtual.Ativo" class="form-check-input" id="ativoCheckFunc" />
                             <label class="form-check-label" for="ativoCheckFunc">Ativo</label>
@@ -227,10 +307,15 @@
     private string? mensagemErro;
     private string? mensagemSucesso;
     private string? mensagemErroModal;
+    private List<Estados> listaEstados = new();
+    private Cidades novaCidade = new();
+    private bool modalNovaCidadeAberto = false;
+    private string? erroNovaCidade;
 
     protected override async Task OnInitializedAsync()
     {
         listaCidades = await cidadesService.GetCidadesAsync();
+        listaEstados = await estadosService.GetEstadosAsync();
         await CarregarFuncionarios();
     }
 
@@ -268,7 +353,10 @@
             Logradouro = f.Logradouro,
             Numero = f.Numero,
             Bairro = f.Bairro,
-            Complemento = f.Complemento
+            Complemento = f.Complemento,
+            PessoaJuridica = f.PessoaJuridica,
+            DataUltimaAlteracao = f.DataUltimaAlteracao,
+            UsuarioUltimaAlteracao = f.UsuarioUltimaAlteracao
         };
         mensagemErroModal = null;
         modalFormAberto = true;
@@ -310,6 +398,35 @@
         catch (Exception ex)
         {
             mensagemErroModal = ex.Message;
+        }
+    }
+
+    private async Task SalvarNovaCidade()
+    {
+        erroNovaCidade = null;
+        if (string.IsNullOrWhiteSpace(novaCidade.Cidade))
+        {
+            erroNovaCidade = "Nome é obrigatório.";
+            return;
+        }
+        if (novaCidade.CodEstado == 0)
+        {
+            erroNovaCidade = "Selecione um estado.";
+            return;
+        }
+        try
+        {
+            await cidadesService.AddCidadeAsync(novaCidade);
+            listaCidades = await cidadesService.GetCidadesAsync();
+            funcionarioAtual.CodCidade = listaCidades
+                .First(c => c.Cidade == novaCidade.Cidade.ToUpper() && c.CodEstado == novaCidade.CodEstado)
+                .CodCidade;
+            novaCidade = new Cidades();
+            modalNovaCidadeAberto = false;
+        }
+        catch (Exception ex)
+        {
+            erroNovaCidade = ex.Message;
         }
     }
 

@@ -23,18 +23,32 @@ namespace ProjetoSalaoDeBeleza.Services
         {
             cidade.Cidade = cidade.Cidade?.ToUpper() ?? string.Empty;
 
+            if (await _context.Cidades.AnyAsync(c => c.Cidade == cidade.Cidade && c.CodEstado == cidade.CodEstado))
+                throw new Exception("Já existe uma cidade com esse nome neste estado.");
+
+            cidade.DataCadastro = DateTime.UtcNow;
+            cidade.DataUltimaAlteracao = DateTime.UtcNow;
+            cidade.UsuarioUltimaAlteracao = "sistema";
+
             _context.Cidades.Add(cidade);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateCidadeAsync(Cidades cidade)
         {
+            cidade.Cidade = cidade.Cidade?.ToUpper() ?? string.Empty;
+
+            if (await _context.Cidades.AnyAsync(c => c.Cidade == cidade.Cidade && c.CodEstado == cidade.CodEstado && c.CodCidade != cidade.CodCidade))
+                throw new Exception("Já existe uma cidade com esse nome neste estado.");
+
             var existente = await _context.Cidades.FindAsync(cidade.CodCidade);
             if (existente == null) throw new Exception("Cidade não encontrada.");
 
-            existente.Cidade = cidade.Cidade?.ToUpper() ?? string.Empty;
+            existente.Cidade = cidade.Cidade;
             existente.CodEstado = cidade.CodEstado;
             existente.DDD = cidade.DDD;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }

@@ -15,5 +15,8 @@ namespace ProjetoSalaoDeBeleza.Models
         public int CodEstado { get; set; }
         [ForeignKey("CodEstado")]
         public Estados oEstado { get; set; }
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public DateTime? DataUltimaAlteracao { get; set; }
+        public string? UsuarioUltimaAlteracao { get; set; }
     }
 }

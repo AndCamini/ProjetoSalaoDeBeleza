@@ -16,5 +16,7 @@ namespace ProjetoSalaoDeBeleza.Models
         public DateTime? UltimaVisita { get; set; }
 
         public bool RecebeNotificacoes { get; set; } = true;
+        public int? CodCondicaoPagamento { get; set; }
+        public CondicaoPagamento? oCondicaoPagamento { get; set; }
     }
 }

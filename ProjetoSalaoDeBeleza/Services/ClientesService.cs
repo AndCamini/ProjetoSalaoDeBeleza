@@ -15,6 +15,7 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task<List<Clientes>> GetClientesAsync() =>
             await _context.Clientes
+                .AsNoTracking()
                 .Include(c => c.oCidade)
                 .ToListAsync();
 
@@ -25,6 +26,16 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddClienteAsync(Clientes cliente)
         {
+            cliente.Nome = cliente.Nome?.ToUpper() ?? string.Empty;
+            cliente.CPF = cliente.CPF?.ToUpper() ?? string.Empty;
+            cliente.Logradouro = cliente.Logradouro?.ToUpper();
+            cliente.Bairro = cliente.Bairro?.ToUpper();
+            cliente.Complemento = cliente.Complemento?.ToUpper();
+            cliente.oCidade = null;
+            cliente.DataCadastro = DateTime.UtcNow;
+            cliente.DataUltimaAlteracao = DateTime.UtcNow;
+            cliente.UsuarioUltimaAlteracao = "sistema";
+
             _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();
         }
@@ -34,22 +45,33 @@ namespace ProjetoSalaoDeBeleza.Services
             var existente = await _context.Clientes.FindAsync(cliente.CodPessoa);
             if (existente == null) throw new Exception("Cliente não encontrado.");
 
-            _context.Entry(existente).CurrentValues.SetValues(cliente);
+            existente.Nome = cliente.Nome?.ToUpper() ?? string.Empty;
+            existente.CPF = cliente.CPF?.ToUpper() ?? string.Empty;
+            existente.Email = cliente.Email;
+            existente.Telefone = cliente.Telefone;
+            existente.DataNascimento = cliente.DataNascimento;
+            existente.CodCidade = cliente.CodCidade;
+            existente.Logradouro = cliente.Logradouro?.ToUpper();
+            existente.Bairro = cliente.Bairro?.ToUpper();
+            existente.Complemento = cliente.Complemento?.ToUpper();
+            existente.Numero = cliente.Numero;
+            existente.CEP = cliente.CEP;
+            existente.Observacoes = cliente.Observacoes;
+            existente.RecebeNotificacoes = cliente.RecebeNotificacoes;
+            existente.Ativo = cliente.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
+
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteClienteAsync(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente != null)
-            {
-                _context.Clientes.Remove(cliente);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("Cliente não encontrado.");
-            }
+            if (cliente == null) throw new Exception("Cliente não encontrado.");
+
+            _context.Clientes.Remove(cliente);
+            await _context.SaveChangesAsync();
         }
     }
 }

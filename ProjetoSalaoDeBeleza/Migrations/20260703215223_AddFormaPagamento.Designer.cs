@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjetoSalaoDeBeleza.Data;
@@ -11,9 +12,11 @@ using ProjetoSalaoDeBeleza.Data;
 namespace ProjetoSalaoDeBeleza.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260703215223_AddFormaPagamento")]
+    partial class AddFormaPagamento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,15 +259,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
-
                     b.HasKey("CodCategoria");
 
                     b.ToTable("Categorias");
@@ -287,9 +281,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<int>("CodEstado")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("DDD")
-                        .HasColumnType("integer");
-
                     b.HasKey("CodCidade");
 
                     b.HasIndex("CodEstado");
@@ -308,12 +299,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<decimal>("Desconto")
                         .HasColumnType("decimal(5,2)");
 
@@ -321,6 +306,9 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<int>("EntreParcelas")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Juros")
                         .HasColumnType("decimal(5,2)");
@@ -333,9 +321,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
 
                     b.Property<int>("PrimeiraParcela")
                         .HasColumnType("integer");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
 
                     b.HasKey("CodCondicao");
 
@@ -412,19 +397,10 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("FormaPagamento")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
 
                     b.HasKey("CodFormaPagamento");
 
@@ -458,18 +434,9 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<int>("CodCidade")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CodCondicaoPagamento")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Complemento")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasMaxLength(50)
@@ -487,9 +454,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
-                    b.Property<bool>("PessoaJuridica")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("RazaoSocial")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -503,14 +467,9 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("character varying(15)");
 
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
-
                     b.HasKey("CodFornecedor");
 
                     b.HasIndex("CodCidade");
-
-                    b.HasIndex("CodCondicaoPagamento");
 
                     b.ToTable("Fornecedores");
                 });
@@ -607,9 +566,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(13)
@@ -632,15 +588,9 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
-                    b.Property<bool>("PessoaJuridica")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Telefone")
                         .HasMaxLength(15)
                         .HasColumnType("character varying(15)");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
 
                     b.HasKey("CodPessoa");
 
@@ -667,12 +617,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<int>("CodCategoria")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Descricao")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -695,9 +639,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
 
                     b.HasKey("CodProduto");
 
@@ -761,12 +702,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Email")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
@@ -787,9 +722,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Property<string>("Telefone")
                         .HasMaxLength(15)
                         .HasColumnType("character varying(15)");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
 
                     b.HasKey("CodTransportador");
 
@@ -825,12 +757,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DataUltimaAlteracao")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Modelo")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -843,9 +769,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
 
                     b.Property<bool>("PlacaMercosul")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("UsuarioUltimaAlteracao")
-                        .HasColumnType("text");
 
                     b.HasKey("CodVeiculo");
 
@@ -862,9 +785,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                 {
                     b.HasBaseType("ProjetoSalaoDeBeleza.Models.Pessoas");
 
-                    b.Property<int?>("CodCondicaoPagamento")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Observacoes")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -880,8 +800,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
 
                     b.Property<DateTime?>("UltimaVisita")
                         .HasColumnType("timestamp without time zone");
-
-                    b.HasIndex("CodCondicaoPagamento");
 
                     b.HasDiscriminator().HasValue("Cliente");
                 });
@@ -1050,14 +968,7 @@ namespace ProjetoSalaoDeBeleza.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ProjetoSalaoDeBeleza.Models.CondicaoPagamento", "oCondicaoPagamento")
-                        .WithMany()
-                        .HasForeignKey("CodCondicaoPagamento")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("oCidade");
-
-                    b.Navigation("oCondicaoPagamento");
                 });
 
             modelBuilder.Entity("ProjetoSalaoDeBeleza.Models.Pessoas", b =>
@@ -1118,16 +1029,6 @@ namespace ProjetoSalaoDeBeleza.Migrations
                     b.Navigation("oTipo");
 
                     b.Navigation("oTransportador");
-                });
-
-            modelBuilder.Entity("ProjetoSalaoDeBeleza.Models.Clientes", b =>
-                {
-                    b.HasOne("ProjetoSalaoDeBeleza.Models.CondicaoPagamento", "oCondicaoPagamento")
-                        .WithMany()
-                        .HasForeignKey("CodCondicaoPagamento")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("oCondicaoPagamento");
                 });
 
             modelBuilder.Entity("ProjetoSalaoDeBeleza.Models.Categorias", b =>

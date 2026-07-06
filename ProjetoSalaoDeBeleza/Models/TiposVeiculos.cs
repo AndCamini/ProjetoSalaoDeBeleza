@@ -12,5 +12,8 @@ namespace ProjetoSalaoDeBeleza.Models
         public string Tipo { get; set; } = string.Empty;
 
         public bool Ativo { get; set; } = true;
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public DateTime? DataUltimaAlteracao { get; set; }
+        public string? UsuarioUltimaAlteracao { get; set; }
     }
 }

@@ -12,6 +12,7 @@
             public string Nome { get; set; }
             [MaxLength(11)]
             public string CPF { get; set; }
+            public bool PessoaJuridica { get; set; } = false;
             [MaxLength(50)]
             public string? Email { get; set; }
             [MaxLength(15)]
@@ -29,6 +30,9 @@
 
             [MaxLength(100)]
             public string? Complemento { get; set; }
+
+            public DateTime? DataUltimaAlteracao { get; set; }
+            public string? UsuarioUltimaAlteracao { get; set; }
 
             [MaxLength(20)]
             public string? Bairro { get; set; }

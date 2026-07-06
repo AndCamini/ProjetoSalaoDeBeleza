@@ -21,17 +21,37 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddFornecedorAsync(Fornecedores fornecedor)
         {
+            fornecedor.RazaoSocial = fornecedor.RazaoSocial?.ToUpper() ?? string.Empty;
+            fornecedor.NomeFantasia = fornecedor.NomeFantasia?.ToUpper();
+            fornecedor.CNPJ = fornecedor.CNPJ?.ToUpper() ?? string.Empty;
+            fornecedor.InscricaoEstadual = fornecedor.InscricaoEstadual?.ToUpper();
+            fornecedor.Rua = fornecedor.Rua?.ToUpper();
+            fornecedor.Bairro = fornecedor.Bairro?.ToUpper();
+            fornecedor.Complemento = fornecedor.Complemento?.ToUpper();
+
             var duplicado = await _context.Fornecedores
                 .AnyAsync(f => f.CNPJ == fornecedor.CNPJ);
             if (duplicado) throw new Exception("Já existe um fornecedor com este CNPJ.");
 
             fornecedor.oCidade = null;
+            fornecedor.DataCadastro = DateTime.UtcNow;
+            fornecedor.DataUltimaAlteracao = DateTime.UtcNow;
+            fornecedor.UsuarioUltimaAlteracao = "sistema";
+
             _context.Fornecedores.Add(fornecedor);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateFornecedorAsync(Fornecedores fornecedor)
         {
+            fornecedor.RazaoSocial = fornecedor.RazaoSocial?.ToUpper() ?? string.Empty;
+            fornecedor.NomeFantasia = fornecedor.NomeFantasia?.ToUpper();
+            fornecedor.CNPJ = fornecedor.CNPJ?.ToUpper() ?? string.Empty;
+            fornecedor.InscricaoEstadual = fornecedor.InscricaoEstadual?.ToUpper();
+            fornecedor.Rua = fornecedor.Rua?.ToUpper();
+            fornecedor.Bairro = fornecedor.Bairro?.ToUpper();
+            fornecedor.Complemento = fornecedor.Complemento?.ToUpper();
+
             var duplicado = await _context.Fornecedores
                 .AnyAsync(f => f.CNPJ == fornecedor.CNPJ && f.CodFornecedor != fornecedor.CodFornecedor);
             if (duplicado) throw new Exception("Já existe um fornecedor com este CNPJ.");
@@ -52,6 +72,8 @@ namespace ProjetoSalaoDeBeleza.Services
             existente.Bairro = fornecedor.Bairro;
             existente.CodCidade = fornecedor.CodCidade;
             existente.Ativo = fornecedor.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }

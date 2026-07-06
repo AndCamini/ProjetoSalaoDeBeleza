@@ -11,6 +11,7 @@ namespace ProjetoSalaoDeBeleza.Models
         public int CodCidade { get; set; }
         [MaxLength(85)]
         public string Cidade { get; set; }
+        public int? DDD { get; set; }
         public int CodEstado { get; set; }
         [ForeignKey("CodEstado")]
         public Estados oEstado { get; set; }

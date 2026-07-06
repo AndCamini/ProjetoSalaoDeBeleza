@@ -55,20 +55,22 @@ namespace ProjetoSalaoDeBeleza.Services
 
             if (condicao.Juros > 0 && condicao.Desconto > 0)
                 throw new Exception("Não é permitido aplicar juros e desconto simultaneamente.");
-
-            if (condicao.NumeroParcelas > 1 && condicao.EntreParcelas == 0)
-                throw new Exception("Informe o prazo entre parcelas para condições com mais de uma parcela.");
         }
 
         public async Task AddCondicaoAsync(CondicaoPagamento condicao)
         {
+            condicao.Descricao = condicao.Descricao?.ToUpper() ?? string.Empty;
             Validar(condicao);
+            condicao.DataCadastro = DateTime.UtcNow;
+            condicao.DataUltimaAlteracao = DateTime.UtcNow;
+            condicao.UsuarioUltimaAlteracao = "sistema";
             _context.CondicoesPagamento.Add(condicao);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateCondicaoAsync(CondicaoPagamento condicao)
         {
+            condicao.Descricao = condicao.Descricao?.ToUpper() ?? string.Empty;
             Validar(condicao);
 
             var existente = await _context.CondicoesPagamento
@@ -80,11 +82,12 @@ namespace ProjetoSalaoDeBeleza.Services
             existente.Descricao = condicao.Descricao;
             existente.NumeroParcelas = condicao.NumeroParcelas;
             existente.PrimeiraParcela = condicao.PrimeiraParcela;
-            existente.EntreParcelas = condicao.EntreParcelas;
             existente.Juros = condicao.Juros;
             existente.Multa = condicao.Multa;
             existente.Desconto = condicao.Desconto;
             existente.Ativo = condicao.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             _context.CondicoesPagamentoParcelas.RemoveRange(existente.Parcelas);
             existente.Parcelas = condicao.Parcelas;

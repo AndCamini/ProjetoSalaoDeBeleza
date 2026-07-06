@@ -18,9 +18,6 @@ namespace ProjetoSalaoDeBeleza.Models
         [Range(0, 999, ErrorMessage = "Prazo da 1ª parcela não pode ser negativo.")]
         public int PrimeiraParcela { get; set; } = 0;
 
-        [Range(0, 999, ErrorMessage = "Prazo entre parcelas não pode ser negativo.")]
-        public int EntreParcelas { get; set; } = 0;
-
         [Range(0, 100, ErrorMessage = "Juros deve ser entre 0% e 100%.")]
         [Column(TypeName = "decimal(5,2)")]
         public decimal Juros { get; set; } = 0;
@@ -36,5 +33,8 @@ namespace ProjetoSalaoDeBeleza.Models
         public bool Ativo { get; set; } = true;
 
         public List<CondicaoPagamentoParcela> Parcelas { get; set; } = new();
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public DateTime? DataUltimaAlteracao { get; set; }
+        public string? UsuarioUltimaAlteracao { get; set; }
     }
 }

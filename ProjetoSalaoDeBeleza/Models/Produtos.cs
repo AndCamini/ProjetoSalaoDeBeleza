@@ -34,5 +34,8 @@ namespace ProjetoSalaoDeBeleza.Models
 
         public int CodCategoria { get; set; }
         public Categorias? oCategoria { get; set; }
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public DateTime? DataUltimaAlteracao { get; set; }
+        public string? UsuarioUltimaAlteracao { get; set; }
     }
 }

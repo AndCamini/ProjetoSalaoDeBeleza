@@ -21,41 +21,48 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddProdutoAsync(Produtos produto)
         {
+            produto.Produto = produto.Produto?.ToUpper() ?? string.Empty;
+            produto.Descricao = produto.Descricao?.ToUpper();
+            produto.UnidadeMedida = produto.UnidadeMedida?.ToUpper() ?? string.Empty;
+
             Validar(produto);
 
             var duplicado = await _context.Produtos
-                .AnyAsync(p => p.Produto.ToLower() == produto.Produto.ToLower());
-
-            if (duplicado)
-                throw new Exception("Já existe um produto com esse nome.");
+                .AnyAsync(p => p.Produto == produto.Produto);
+            if (duplicado) throw new Exception("Já existe um produto com esse nome.");
 
             produto.oCategoria = null;
+            produto.DataCadastro = DateTime.UtcNow;
+            produto.DataUltimaAlteracao = DateTime.UtcNow;
+            produto.UsuarioUltimaAlteracao = "sistema";
+
             _context.Produtos.Add(produto);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateProdutoAsync(Produtos produto)
         {
+            produto.Produto = produto.Produto?.ToUpper() ?? string.Empty;
+            produto.Descricao = produto.Descricao?.ToUpper();
+            produto.UnidadeMedida = produto.UnidadeMedida?.ToUpper() ?? string.Empty;
+
             Validar(produto);
 
             var duplicado = await _context.Produtos
-                .AnyAsync(p => p.Produto.ToLower() == produto.Produto.ToLower()
-                            && p.CodProduto != produto.CodProduto);
-
-            if (duplicado)
-                throw new Exception("Já existe um produto com esse nome.");
+                .AnyAsync(p => p.Produto == produto.Produto && p.CodProduto != produto.CodProduto);
+            if (duplicado) throw new Exception("Já existe um produto com esse nome.");
 
             var existente = await _context.Produtos.FindAsync(produto.CodProduto);
             if (existente == null) throw new Exception("Produto não encontrado.");
 
             existente.Produto = produto.Produto;
             existente.Descricao = produto.Descricao;
-            existente.PrecoCusto = produto.PrecoCusto;
             existente.PrecoVenda = produto.PrecoVenda;
-            existente.Estoque = produto.Estoque;
             existente.UnidadeMedida = produto.UnidadeMedida;
             existente.Ativo = produto.Ativo;
             existente.CodCategoria = produto.CodCategoria;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }

@@ -75,6 +75,18 @@ namespace ProjetoSalaoDeBeleza.Data
                 .WithMany()
                 .HasForeignKey(v => v.CodTipo)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Clientes>()
+                .HasOne(c => c.oCondicaoPagamento)
+                .WithMany()
+                .HasForeignKey(c => c.CodCondicaoPagamento)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Fornecedores>()
+                .HasOne(f => f.oCondicaoPagamento)
+                .WithMany()
+                .HasForeignKey(f => f.CodCondicaoPagamento)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

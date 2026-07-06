@@ -33,5 +33,8 @@ namespace ProjetoSalaoDeBeleza.Models
         public Transportadores? oTransportador { get; set; }
 
         public bool Ativo { get; set; } = true;
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public DateTime? DataUltimaAlteracao { get; set; }
+        public string? UsuarioUltimaAlteracao { get; set; }
     }
 }

@@ -18,9 +18,15 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddTipoAsync(TiposVeiculos tipo)
         {
+            tipo.Tipo = tipo.Tipo?.ToUpper() ?? string.Empty;
+
             var duplicado = await _context.TiposVeiculos
-                .AnyAsync(t => t.Tipo.ToLower() == tipo.Tipo.ToLower());
+                .AnyAsync(t => t.Tipo == tipo.Tipo);
             if (duplicado) throw new Exception("Já existe um tipo com esse nome.");
+
+            tipo.DataCadastro = DateTime.UtcNow;
+            tipo.DataUltimaAlteracao = DateTime.UtcNow;
+            tipo.UsuarioUltimaAlteracao = "sistema";
 
             _context.TiposVeiculos.Add(tipo);
             await _context.SaveChangesAsync();
@@ -28,11 +34,16 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task UpdateTipoAsync(TiposVeiculos tipo)
         {
+            tipo.Tipo = tipo.Tipo?.ToUpper() ?? string.Empty;
+
             var existente = await _context.TiposVeiculos.FindAsync(tipo.CodTipo);
             if (existente == null) throw new Exception("Tipo não encontrado.");
 
             existente.Tipo = tipo.Tipo;
             existente.Ativo = tipo.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
+
             await _context.SaveChangesAsync();
         }
 

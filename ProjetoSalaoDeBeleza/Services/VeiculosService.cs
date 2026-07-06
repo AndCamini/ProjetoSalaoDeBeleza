@@ -23,33 +23,43 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddVeiculoAsync(Veiculos veiculo)
         {
+            veiculo.Placa = veiculo.Placa?.ToUpper() ?? string.Empty;
+            veiculo.Modelo = veiculo.Modelo?.ToUpper() ?? string.Empty;
+            veiculo.Cor = veiculo.Cor?.ToUpper();
+
             Validar(veiculo);
 
             var duplicado = await _context.Veiculos
-                .AnyAsync(v => v.Placa.ToUpper() == veiculo.Placa.ToUpper());
+                .AnyAsync(v => v.Placa == veiculo.Placa);
             if (duplicado) throw new Exception("Já existe um veículo com esta placa.");
 
-            veiculo.Placa = veiculo.Placa.ToUpper();
             veiculo.oMarca = null;
             veiculo.oTipo = null;
             veiculo.oTransportador = null;
+            veiculo.DataCadastro = DateTime.UtcNow;
+            veiculo.DataUltimaAlteracao = DateTime.UtcNow;
+            veiculo.UsuarioUltimaAlteracao = "sistema";
+
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateVeiculoAsync(Veiculos veiculo)
         {
+            veiculo.Placa = veiculo.Placa?.ToUpper() ?? string.Empty;
+            veiculo.Modelo = veiculo.Modelo?.ToUpper() ?? string.Empty;
+            veiculo.Cor = veiculo.Cor?.ToUpper();
+
             Validar(veiculo);
 
             var duplicado = await _context.Veiculos
-                .AnyAsync(v => v.Placa.ToUpper() == veiculo.Placa.ToUpper()
-                            && v.CodVeiculo != veiculo.CodVeiculo);
+                .AnyAsync(v => v.Placa == veiculo.Placa && v.CodVeiculo != veiculo.CodVeiculo);
             if (duplicado) throw new Exception("Já existe um veículo com esta placa.");
 
             var existente = await _context.Veiculos.FindAsync(veiculo.CodVeiculo);
             if (existente == null) throw new Exception("Veículo não encontrado.");
 
-            existente.Placa = veiculo.Placa.ToUpper();
+            existente.Placa = veiculo.Placa;
             existente.PlacaMercosul = veiculo.PlacaMercosul;
             existente.Modelo = veiculo.Modelo;
             existente.Cor = veiculo.Cor;
@@ -58,6 +68,8 @@ namespace ProjetoSalaoDeBeleza.Services
             existente.CodTipo = veiculo.CodTipo;
             existente.CodTransportador = veiculo.CodTransportador;
             existente.Ativo = veiculo.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }
@@ -78,7 +90,7 @@ namespace ProjetoSalaoDeBeleza.Services
 
             if (veiculo.PlacaMercosul)
             {
-                // Formato Mercosul: AAA0A00 (3 letras, 1 número, 1 letra, 2 números)
+                // Formato Mercosul:
                 var placa = veiculo.Placa.ToUpper().Trim();
                 if (placa.Length != 7)
                     throw new Exception("Placa Mercosul deve ter exatamente 7 caracteres (ex: ABC1D23).");
@@ -97,7 +109,7 @@ namespace ProjetoSalaoDeBeleza.Services
             }
             else
             {
-                // Formato antigo: AAA0000 (3 letras, 4 números)
+                // Formato antigo:
                 var placa = veiculo.Placa.ToUpper().Trim();
                 if (placa.Length != 7)
                     throw new Exception("Placa deve ter exatamente 7 caracteres (ex: ABC1234).");

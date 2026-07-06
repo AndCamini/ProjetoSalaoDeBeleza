@@ -90,11 +90,6 @@
                                 <InputNumber @bind-Value="condicaoAtual.PrimeiraParcela" class="form-control" />
                                 <ValidationMessage For="@(() => condicaoAtual.PrimeiraParcela)" />
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Entre Parcelas (dias)</label>
-                                <InputNumber @bind-Value="condicaoAtual.EntreParcelas" class="form-control" />
-                                <ValidationMessage For="@(() => condicaoAtual.EntreParcelas)" />
-                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4 mb-3">
@@ -223,7 +218,6 @@
                             <tr><th>Descrição</th><td>@condicaoExcluir.Descricao</td></tr>
                             <tr><th>Parcelas</th><td>@condicaoExcluir.NumeroParcelas</td></tr>
                             <tr><th>1ª Parcela (dias)</th><td>@condicaoExcluir.PrimeiraParcela</td></tr>
-                            <tr><th>Entre Parcelas (dias)</th><td>@condicaoExcluir.EntreParcelas</td></tr>
                             <tr><th>Juros</th><td>@condicaoExcluir.Juros.ToString("F2")%</td></tr>
                             <tr><th>Multa</th><td>@condicaoExcluir.Multa.ToString("F2")%</td></tr>
                             <tr><th>Desconto</th><td>@condicaoExcluir.Desconto.ToString("F2")%</td></tr>
@@ -294,7 +288,6 @@
             Descricao = c.Descricao,
             NumeroParcelas = c.NumeroParcelas,
             PrimeiraParcela = c.PrimeiraParcela,
-            EntreParcelas = c.EntreParcelas,
             Juros = c.Juros,
             Multa = c.Multa,
             Desconto = c.Desconto,

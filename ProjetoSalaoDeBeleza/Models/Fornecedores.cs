@@ -18,6 +18,7 @@ namespace ProjetoSalaoDeBeleza.Models
         [Required(ErrorMessage = "CNPJ é obrigatório.")]
         [MaxLength(14)]
         public string CNPJ { get; set; } = string.Empty;
+        public bool PessoaJuridica { get; set; } = true;
 
         [MaxLength(20)]
         public string? InscricaoEstadual { get; set; }
@@ -47,5 +48,10 @@ namespace ProjetoSalaoDeBeleza.Models
         public Cidades? oCidade { get; set; }
 
         public bool Ativo { get; set; } = true;
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public DateTime? DataUltimaAlteracao { get; set; }
+        public string? UsuarioUltimaAlteracao { get; set; }
+        public int? CodCondicaoPagamento { get; set; }
+        public CondicaoPagamento? oCondicaoPagamento { get; set; }
     }
 }

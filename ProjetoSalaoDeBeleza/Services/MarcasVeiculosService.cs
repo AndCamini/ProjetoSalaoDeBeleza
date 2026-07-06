@@ -18,9 +18,15 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddMarcaAsync(MarcasVeiculos marca)
         {
+            marca.MarcaVeiculo = marca.MarcaVeiculo?.ToUpper() ?? string.Empty;
+
             var duplicada = await _context.MarcasVeiculos
-                .AnyAsync(m => m.MarcaVeiculo.ToLower() == marca.MarcaVeiculo.ToLower());
+                .AnyAsync(m => m.MarcaVeiculo == marca.MarcaVeiculo);
             if (duplicada) throw new Exception("Já existe uma marca com esse nome.");
+
+            marca.DataCadastro = DateTime.UtcNow;
+            marca.DataUltimaAlteracao = DateTime.UtcNow;
+            marca.UsuarioUltimaAlteracao = "sistema";
 
             _context.MarcasVeiculos.Add(marca);
             await _context.SaveChangesAsync();
@@ -28,11 +34,16 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task UpdateMarcaAsync(MarcasVeiculos marca)
         {
+            marca.MarcaVeiculo = marca.MarcaVeiculo?.ToUpper() ?? string.Empty;
+
             var existente = await _context.MarcasVeiculos.FindAsync(marca.CodMarca);
             if (existente == null) throw new Exception("Marca não encontrada.");
 
             existente.MarcaVeiculo = marca.MarcaVeiculo;
             existente.Ativo = marca.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
+
             await _context.SaveChangesAsync();
         }
 

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; // Adicione esta linha!
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjetoSalaoDeBeleza.Models
 {

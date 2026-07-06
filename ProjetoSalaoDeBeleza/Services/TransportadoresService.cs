@@ -21,16 +21,34 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddTransportadorAsync(Transportadores transportador)
         {
+            transportador.Nome = transportador.Nome?.ToUpper() ?? string.Empty;
+            transportador.CPF = transportador.CPF?.ToUpper();
+            transportador.CNPJ = transportador.CNPJ?.ToUpper();
+            transportador.Rua = transportador.Rua?.ToUpper();
+            transportador.Bairro = transportador.Bairro?.ToUpper();
+            transportador.Complemento = transportador.Complemento?.ToUpper();
+
             if (string.IsNullOrWhiteSpace(transportador.CPF) && string.IsNullOrWhiteSpace(transportador.CNPJ))
                 throw new Exception("Informe CPF ou CNPJ.");
 
             transportador.oCidade = null;
+            transportador.DataCadastro = DateTime.UtcNow;
+            transportador.DataUltimaAlteracao = DateTime.UtcNow;
+            transportador.UsuarioUltimaAlteracao = "sistema";
+
             _context.Transportadores.Add(transportador);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateTransportadorAsync(Transportadores transportador)
         {
+            transportador.Nome = transportador.Nome?.ToUpper() ?? string.Empty;
+            transportador.CPF = transportador.CPF?.ToUpper();
+            transportador.CNPJ = transportador.CNPJ?.ToUpper();
+            transportador.Rua = transportador.Rua?.ToUpper();
+            transportador.Bairro = transportador.Bairro?.ToUpper();
+            transportador.Complemento = transportador.Complemento?.ToUpper();
+
             if (string.IsNullOrWhiteSpace(transportador.CPF) && string.IsNullOrWhiteSpace(transportador.CNPJ))
                 throw new Exception("Informe CPF ou CNPJ.");
 
@@ -49,6 +67,8 @@ namespace ProjetoSalaoDeBeleza.Services
             existente.Bairro = transportador.Bairro;
             existente.CodCidade = transportador.CodCidade;
             existente.Ativo = transportador.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }

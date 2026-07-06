@@ -18,9 +18,15 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddFormaPagamentoAsync(FormasPagamento forma)
         {
+            forma.FormaPagamento = forma.FormaPagamento?.ToUpper() ?? string.Empty;
+
             var duplicada = await _context.FormasPagamento
-                .AnyAsync(f => f.FormaPagamento.ToLower() == forma.FormaPagamento.ToLower());
+                .AnyAsync(f => f.FormaPagamento == forma.FormaPagamento);
             if (duplicada) throw new Exception("Já existe uma forma de pagamento com essa descrição.");
+
+            forma.DataCadastro = DateTime.UtcNow;
+            forma.DataUltimaAlteracao = DateTime.UtcNow;
+            forma.UsuarioUltimaAlteracao = "sistema";
 
             _context.FormasPagamento.Add(forma);
             await _context.SaveChangesAsync();
@@ -28,8 +34,10 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task UpdateFormaPagamentoAsync(FormasPagamento forma)
         {
+            forma.FormaPagamento = forma.FormaPagamento?.ToUpper() ?? string.Empty;
+
             var duplicada = await _context.FormasPagamento
-                .AnyAsync(f => f.FormaPagamento.ToLower() == forma.FormaPagamento.ToLower()
+                .AnyAsync(f => f.FormaPagamento == forma.FormaPagamento
                             && f.CodFormaPagamento != forma.CodFormaPagamento);
             if (duplicada) throw new Exception("Já existe uma forma de pagamento com essa descrição.");
 
@@ -38,6 +46,8 @@ namespace ProjetoSalaoDeBeleza.Services
 
             existente.FormaPagamento = forma.FormaPagamento;
             existente.Ativo = forma.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }

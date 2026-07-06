@@ -18,11 +18,16 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddCategoriaAsync(Categorias categoria)
         {
-            var duplicada = await _context.Categorias
-                .AnyAsync(c => c.Categoria.ToLower() == categoria.Categoria.ToLower());
+            categoria.Categoria = categoria.Categoria?.ToUpper() ?? string.Empty;
 
+            var duplicada = await _context.Categorias
+                .AnyAsync(c => c.Categoria == categoria.Categoria);
             if (duplicada)
                 throw new Exception("Já existe uma categoria com esse nome.");
+
+            categoria.DataCadastro = DateTime.UtcNow;
+            categoria.DataUltimaAlteracao = DateTime.UtcNow;
+            categoria.UsuarioUltimaAlteracao = "sistema";
 
             _context.Categorias.Add(categoria);
             await _context.SaveChangesAsync();
@@ -30,10 +35,11 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task UpdateCategoriaAsync(Categorias categoria)
         {
-            var duplicada = await _context.Categorias
-                .AnyAsync(c => c.Categoria.ToLower() == categoria.Categoria.ToLower()
-                            && c.CodCategoria != categoria.CodCategoria);
+            categoria.Categoria = categoria.Categoria?.ToUpper() ?? string.Empty;
 
+            var duplicada = await _context.Categorias
+                .AnyAsync(c => c.Categoria == categoria.Categoria
+                            && c.CodCategoria != categoria.CodCategoria);
             if (duplicada)
                 throw new Exception("Já existe uma categoria com esse nome.");
 
@@ -42,6 +48,8 @@ namespace ProjetoSalaoDeBeleza.Services
 
             existente.Categoria = categoria.Categoria;
             existente.Ativo = categoria.Ativo;
+            existente.DataUltimaAlteracao = DateTime.UtcNow;
+            existente.UsuarioUltimaAlteracao = "sistema";
 
             await _context.SaveChangesAsync();
         }

@@ -19,6 +19,11 @@ namespace ProjetoSalaoDeBeleza.Services
 
         public async Task AddPaisAsync(Paises pais)
         {
+            pais.Pais = pais.Pais?.ToUpper() ?? string.Empty;
+            pais.Sigla = pais.Sigla?.ToUpper() ?? string.Empty;
+            pais.DDI = pais.DDI?.ToUpper() ?? string.Empty;
+            pais.Moeda = pais.Moeda?.ToUpper() ?? string.Empty;
+
             _context.Paises.Add(pais);
             await _context.SaveChangesAsync();
         }
@@ -28,10 +33,10 @@ namespace ProjetoSalaoDeBeleza.Services
             var existente = await _context.Paises.FindAsync(pais.CodPais);
             if (existente == null) throw new Exception("País não encontrado.");
 
-            existente.Pais = pais.Pais;
-            existente.Sigla = pais.Sigla;
-            existente.DDI = pais.DDI;
-            existente.Moeda = pais.Moeda;
+            existente.Pais = pais.Pais?.ToUpper() ?? string.Empty;
+            existente.Sigla = pais.Sigla?.ToUpper() ?? string.Empty;
+            existente.DDI = pais.DDI?.ToUpper() ?? string.Empty;
+            existente.Moeda = pais.Moeda?.ToUpper() ?? string.Empty;
 
             await _context.SaveChangesAsync();
         }

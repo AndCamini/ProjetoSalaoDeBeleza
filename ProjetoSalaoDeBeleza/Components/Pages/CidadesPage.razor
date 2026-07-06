@@ -31,6 +31,7 @@
             <th>Cód</th>
             <th>Cidade</th>
             <th>Estado</th>
+            <th>DDD</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -41,6 +42,7 @@
                 <td>@c.CodCidade</td>
                 <td>@c.Cidade</td>
                 <td>@listaEstados.FirstOrDefault(e => e.CodEstado == c.CodEstado)?.Estado</td>
+                <td>@c.DDD</td>
                 <td>
                     <button class="btn btn-warning btn-sm" @onclick="() => AbrirModalEditar(c)">Editar</button>
                     <button class="btn btn-danger btn-sm" @onclick="() => AbrirModalExcluir(c)">Excluir</button>
@@ -78,6 +80,10 @@
                             }
                         </InputSelect>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">DDD</label>
+                        <InputNumber @bind-Value="cidadeAtual.DDD" class="form-control" style="max-width: 100px;" />
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="FecharModal">Cancelar</button>
@@ -104,6 +110,7 @@
                             <tr><th>Código</th><td>@cidadeExcluir.CodCidade</td></tr>
                             <tr><th>Cidade</th><td>@cidadeExcluir.Cidade</td></tr>
                             <tr><th>Estado</th><td>@listaEstados.FirstOrDefault(e => e.CodEstado == cidadeExcluir.CodEstado)?.Estado</td></tr>
+                            <tr><th>DDD</th><td>@cidadeExcluir.DDD</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -149,7 +156,8 @@
         {
             CodCidade = c.CodCidade,
             Cidade = c.Cidade,
-            CodEstado = c.CodEstado
+            CodEstado = c.CodEstado,
+            DDD = c.DDD
         };
         mensagemErroModal = null;
         modalAberto = true;
